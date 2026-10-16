@@ -1,69 +1,82 @@
-import Image from "next/image";
+import dynamic from "next/dynamic";
+import { Hero } from "@/components/home/Hero";
+import { HOME_FAQ } from "@/lib/site";
+import type { Metadata } from "next";
 
-export default function Home() {
+// Ekranın altında kalan bölümler streaming ile geç yüklenir:
+// ilk HTML/JS küçülür, LCP ve TTI hızlanır. Hero kritik olduğu için senkron kalır.
+const WhyUs = dynamic(() => import("@/components/home/Sections").then((m) => m.WhyUs), {
+  loading: () => <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6" aria-hidden="true"><div className="h-64 animate-pulse rounded-2xl bg-slate-200/60" /></div>,
+});
+const ServicesBento = dynamic(() => import("@/components/home/Sections").then((m) => m.ServicesBento), {
+  loading: () => <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6" aria-hidden="true"><div className="h-64 animate-pulse rounded-2xl bg-slate-200/60" /></div>,
+});
+const Roadmap = dynamic(() => import("@/components/home/Sections").then((m) => m.Roadmap), {
+  loading: () => <div className="border-y border-slate-200 bg-white py-16" aria-hidden="true"><div className="mx-auto max-w-7xl px-4 sm:px-6"><div className="h-48 animate-pulse rounded-2xl bg-slate-200/60" /></div></div>,
+});
+const Metrics = dynamic(() => import("@/components/home/Sections").then((m) => m.Metrics), {
+  loading: () => <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6" aria-hidden="true"><div className="h-40 animate-pulse rounded-3xl bg-navy-950/10" /></div>,
+});
+const StoriesPreview = dynamic(() => import("@/components/home/Sections").then((m) => m.StoriesPreview), {
+  loading: () => <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6" aria-hidden="true"><div className="h-64 animate-pulse rounded-2xl bg-slate-200/60" /></div>,
+});
+const InsightsPreview = dynamic(() => import("@/components/home/Sections").then((m) => m.InsightsPreview), {
+  loading: () => <div className="border-t border-slate-200 bg-white py-16" aria-hidden="true"><div className="mx-auto max-w-7xl px-4 sm:px-6"><div className="h-64 animate-pulse rounded-2xl bg-slate-200/60" /></div></div>,
+});
+const Faq = dynamic(() => import("@/components/home/Faq"), {
+  loading: () => <div className="h-48 animate-pulse rounded-2xl bg-slate-200/60" aria-hidden="true" />,
+});
+const ContactForm = dynamic(() => import("@/components/forms/ContactForm"), {
+  loading: () => <div className="h-96 animate-pulse rounded-2xl border border-slate-200 bg-white" aria-hidden="true" />,
+});
+
+export const metadata: Metadata = {
+  title: "Sonuç Odaklı Dijital Pazarlama & E-Ticaret Ajansı",
+  description:
+    "Google Ads, Meta, SEO, GEO, sosyal medya yönetimi, e-ticaret kurulum ve danışmanlık. %500+ satış artışı vakalarıyla performans odaklı ajans.",
+  alternates: { canonical: "/" },
+};
+
+export default function HomePage() {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: HOME_FAQ.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <Hero />
+      <WhyUs />
+      <ServicesBento />
+      <Roadmap />
+      <Metrics />
+      <StoriesPreview />
+      <InsightsPreview />
+
+      <section id="iletisim" className="cv-auto mx-auto max-w-7xl scroll-mt-24 px-4 pb-20 sm:px-6" aria-label="SSS ve iletişim">
+        <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+          <div className="lg:py-6">
+            <p className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-navy-800"><span className="h-px w-8 bg-gold-500" aria-hidden="true" />SSS</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
+              Merak ettikleriniz
+            </h2>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-slate-500">
+              Aklınıza takılan başka bir soru varsa formu doldurun, ekibimiz sizi arasın.
+            </p>
+            <div className="mt-6">
+              <Faq items={HOME_FAQ} />
+            </div>
+          </div>
+          <div className="lg:py-6">
+            <ContactForm />
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </>
   );
 }

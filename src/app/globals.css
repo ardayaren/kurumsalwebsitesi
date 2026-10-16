@@ -1,26 +1,136 @@
 @import "tailwindcss";
 
+@theme {
+  --color-obsidian: #090d16;
+  --color-panel: #0e1422;
+  /* Kurumsal palet: lacivert (birincil) + altın sarısı (vurgu) */
+  --color-navy-50: #f0f3f9;
+  --color-navy-100: #dce4f2;
+  --color-navy-200: #b9c8e4;
+  --color-navy-600: #1f3a7a;
+  --color-navy-700: #1a3268;
+  --color-navy-800: #14275a;
+  --color-navy-900: #0e1c44;
+  --color-navy-950: #0a1430;
+  --color-gold-100: #fbf0d3;
+  --color-gold-200: #f6e2a6;
+  --color-gold-300: #f0d47e;
+  --color-gold-400: #edbe4a;
+  --color-gold-500: #e5a812;
+  --color-gold-600: #b97f0b;
+  --color-gold-700: #8a5f08;
+  --font-display: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f6fb;
+  color: #0f172a;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
+
+/* Grid-lines overlay for hero */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(15 23 42 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(15 23 42 / 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, black 40%, transparent 100%);
+}
+
+/* Koyu zeminler için ızgara varyantı */
+.bg-grid-light {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+
+::selection {
+  background: #f6e2a6;
+  color: #0a1430;
+}
+
+:focus-visible {
+  outline: 2px solid #14275a;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.glass {
+  background: rgb(255 255 255 / 0.85);
+  border: 1px solid #e4e9f2;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.05);
+}
+
+@media (max-width: 640px) {
+  /* Mobil GPU'yu rahatlat: çok sayıda blur'lu kart jank yaratır */
+  .glass {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: rgb(255 255 255 / 0.97);
+  }
+}
+
+/* Ekran dışı bölümler boyanmasın: kaydırdıkça render edilir */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+.card-glow {
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.card-glow:hover {
+  transform: translateY(-4px);
+  border-color: rgb(20 39 90 / 0.35);
+  box-shadow: 0 0 0 1px rgb(20 39 90 / 0.12), 0 20px 44px -20px rgb(10 20 48 / 0.35);
+}
+
+/* Infinite ticker */
+@keyframes ticker-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+.animate-ticker {
+  animation: ticker-scroll 32s linear infinite;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker { animation: none; }
+  html { scroll-behavior: auto; }
+  .reveal { animation: none; }
+}
+
+/* Reveal on scroll — sadece hero'da anında oynar, diğerleri IO ile tetiklenir */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  animation: rise-in 0.7s ease both;
+  will-change: opacity, transform;
+}
+
+/* Thin scrollbars for drawers/tables */
+.nice-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
+.nice-scroll::-webkit-scrollbar-thumb { background: rgb(15 23 42 / 0.18); border-radius: 8px; }

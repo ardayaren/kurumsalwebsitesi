@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  NEW
+  IN_REVIEW
+  CONTACTED
+  CLOSED
+}
+
+model Inquiry {
+  id        String     @id @default(cuid())
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  name      String
+  phone     String
+  email     String
+  website   String?
+  service   String
+  message   String
+  status    LeadStatus @default(NEW)
+  contactedAt DateTime?
+  notes     Note[]
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  DONE
+  CANCELLED
+}
+
+model Appointment {
+  id        String             @id @default(cuid())
+  createdAt DateTime           @default(now())
+  name      String
+  phone     String
+  email     String
+  topic     String
+  date      String
+  time      String
+  note      String?
+  status    AppointmentStatus  @default(PENDING)
+}
+
+model CareerApplication {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  name      String
+  email     String
+  phone     String
+  position  String
+  linkedin  String?
+  message   String
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  inquiryId String
+  inquiry   Inquiry  @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+  author    String   @default("Admin")
+  text      String
+}
